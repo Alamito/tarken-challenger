@@ -1,4 +1,5 @@
 const getPixels = require('get-pixels');
+const sizeOf = require('image-size');
 
 const pixelGetter = () => {
 	const promiseCallback = (res, rej) => {

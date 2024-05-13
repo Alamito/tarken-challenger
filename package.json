@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Alamito/tarken-challenger#readme",
   "dependencies": {
-    "get-pixels": "^3.3.3"
+    "get-pixels": "^3.3.3",
+    "image-size": "^1.1.1"
   }
 }
