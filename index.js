@@ -12,24 +12,29 @@ const pixelGetter = () => {
 	};
 
 	return new Promise(promiseCallback);
-}
+};
 
-const whitePixelCounter = () => {
+const pixelsCounter = (color) => {
+	const {R, G, B} = color;
 	const promiseCallback = async (res) => {
 		const pixelsData = await pixelGetter();
-		let whitePixelCount = 0;
+		let pixelCount = 0;
 		for (let i = 0; i < pixelsData.length; i += 4) {
-			if (pixelsData[i] === 255 && pixelsData[i + 1] === 255 && pixelsData[i + 2] === 255) {
-				whitePixelCount++;
+			if (pixelsData[i] === R && pixelsData[i + 1] === G && pixelsData[i + 2] === B) {
+				pixelCount++;
 			}
 		}
-		return res(whitePixelCount);
+		return res(pixelCount);
 	};
 
 	return new Promise(promiseCallback);
 };
 
 ( async () => {
-	const whitePixelCount = await whitePixelCounter();
-	console.log(whitePixelCount);
+	const WHITE = {R: 255, G: 255, B: 255};
+	const RED = {R: 255, G: 0, B: 0};
+	const whitePixelCount = await pixelsCounter(WHITE);
+	const redPixelCount = await pixelsCounter(RED);
+	console.log(`There are ${whitePixelCount} stars in the image`);
+	console.log(`There are ${redPixelCount} meteors in the image`);
 })();
