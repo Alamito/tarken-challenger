@@ -1,3 +1,5 @@
+"use strict";
+
 const getPixels = require('get-pixels');
 const sizeOf = require('image-size');
 
@@ -40,25 +42,29 @@ const getWidthFromImg = () => {
 	return new Promise(promiseCallback);
 };
 
-const getPixelPosition = (color) => {
+const getPixelPosition = (color, allowDuplicates = false) => {
 	const {R, G, B} = color;
 	const promiseCallback = async (res) => {
 		const pixelsData = await pixelGetter();
 		const width = await getWidthFromImg();
-		const postionWaterPixels = [];
+		const postionPixels = [];
 		let pixelPosition = 1;
 	
 		for (let i = 0; i < pixelsData.length; i += 4) {
 			if (pixelsData[i] === R && pixelsData[i + 1] === G && pixelsData[i + 2] === B) {
-				postionWaterPixels.includes(pixelPosition) ? null : postionWaterPixels.push(pixelPosition);
-				
+				if (allowDuplicates) {
+					postionPixels.push(pixelPosition);
+					continue;
+				}
+
+				postionPixels.includes(pixelPosition) ? null : postionPixels.push(pixelPosition);
 			}
 			if (pixelPosition++ === width) {
 				pixelPosition = 1;
 			}
 		}
 
-		return res(postionWaterPixels);
+		return res(postionPixels);
 	};
 
 	return new Promise(promiseCallback);
@@ -75,11 +81,11 @@ const intersectionBetweenArrays = (arr1, arr2) => {
 
 	const startCounter = await pixelsCounter(COLOR_STAR);
 	const meteorCounter = await pixelsCounter(COLOR_METEOR);
-	const waterPosition = await getPixelPosition(COLOR_WATER);
-	const meteorPosition = await getPixelPosition(COLOR_METEOR);
-	const amountOfMeteorsInWater = intersectionBetweenArrays(waterPosition, meteorPosition).length;
+	const waterPosition = await getPixelPosition(COLOR_WATER, false);
+	const meteorPosition = await getPixelPosition(COLOR_METEOR, true);
+	const amountOfMeteorsInWater = intersectionBetweenArrays(meteorPosition, waterPosition).length;
 
 	console.log(`There are ${startCounter} stars in the image`);
 	console.log(`There are ${meteorCounter} meteors in the image`);
-	console.log(`The amount of meteors that will fall in the water are ${amountOfMeteorsInWater}`)
+	console.log(`The amount of meteors that will fall in the water are ${amountOfMeteorsInWater}`);
 })();
