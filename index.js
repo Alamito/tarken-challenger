@@ -48,19 +48,20 @@ const getPixelPosition = (color, allowDuplicates = false) => {
 		const pixelsData = await pixelGetter();
 		const width = await getWidthFromImg();
 		const postionPixels = [];
-		let pixelPosition = 1;
+		let pixelPosition = 0;
 	
 		for (let i = 0; i < pixelsData.length; i += 4) {
+			if (pixelPosition++ === width) {
+				pixelPosition = 1;
+			}
+			
 			if (pixelsData[i] === R && pixelsData[i + 1] === G && pixelsData[i + 2] === B) {
 				if (allowDuplicates) {
 					postionPixels.push(pixelPosition);
 					continue;
 				}
-
+				
 				postionPixels.includes(pixelPosition) ? null : postionPixels.push(pixelPosition);
-			}
-			if (pixelPosition++ === width) {
-				pixelPosition = 1;
 			}
 		}
 
